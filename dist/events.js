@@ -1,4 +1,5 @@
-(function(e, a) { for(var i in a) e[i] = a[i]; }(this, /******/ (function(modules) { // webpackBootstrap
+var Events =
+/******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 
@@ -204,4 +205,4 @@ var Events = function () {
 exports.default = Events;
 
 /***/ })
-/******/ ])));
+/******/ ]);

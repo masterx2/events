@@ -5,7 +5,7 @@ module.exports = {
     output: {
         path: './dist/',
         filename: '[name].js',
-        libraryTarget: 'this'
+        library: 'Events'
     },
     module: {
         rules: [
