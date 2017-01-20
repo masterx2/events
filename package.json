@@ -1,0 +1,31 @@
+{
+  "name": "eventsjs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-core": "^6.22.1",
+    "babel-loader": "^6.2.10",
+    "babel-preset-env": "^1.1.8",
+    "babel-preset-es2015": "^6.22.0",
+    "webpack": "^2.2.0"
+  },
+  "presets": [
+    [
+      "env",
+      {
+        "debug": true,
+        "targets": {
+          "browsers": [
+            "> 1%"
+          ]
+        }
+      }
+    ]
+  ]
+}
