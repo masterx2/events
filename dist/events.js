@@ -174,7 +174,7 @@ var Events = function () {
             }
             while (evOnce.length > 0) {
                 resultPromises.push(events.call(evOnce.shift(), data));
-            }var resultPromise = new Promise.all(resultPromises);
+            }var resultPromise = Promise.all(resultPromises);
 
             this.fire('fire', [event, resultPromise]);
 
@@ -193,7 +193,7 @@ var Events = function () {
             var events = this;
             return new Promise(function (resolv, reject) {
                 try {
-                    resolve(callback.call(events.parent, data ? data : null));
+                    resolv(callback.call(events.parent, data ? data : null));
                 } catch (error) {
                     reject(error);
                 }

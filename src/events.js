@@ -72,7 +72,7 @@ export default class Events {
             resultPromises.push(events.call(ev[i], data));
         }
         while (evOnce.length > 0) resultPromises.push(events.call(evOnce.shift(), data));
-        let resultPromise = new Promise.all(resultPromises);
+        let resultPromise = Promise.all(resultPromises);
 
         this.fire('fire', [event, resultPromise]);
 
@@ -88,7 +88,7 @@ export default class Events {
         const events = this;
         return new Promise(function(resolv, reject) {
             try {
-                resolve(callback.call(events.parent, data ? data : null));
+                resolv(callback.call(events.parent, data ? data : null));
             } catch (error) {
                 reject(error);
             }
