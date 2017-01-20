@@ -91,6 +91,7 @@ var Events = function () {
         this.mapOnce = {};
         this.mapAlias = {};
     }
+
     /**
      * Добавить callback на событие event, срабатывает каждый раз
      * @param event string Имя события
@@ -106,6 +107,7 @@ var Events = function () {
             this.map[event] ? this.map[event].push(callback) : this.map[event] = [callback];
             alias ? this.mapAlias[alias] = callback : null;
         }
+
         /**
          * Добавить callback на событие event, срабатывает только один раз
          * @param event string Имя события
@@ -120,6 +122,7 @@ var Events = function () {
             this.mapOnce[event] ? this.mapOnce[event].push(callback) : this.mapOnce[event] = [callback];
             alias ? this.mapAlias[alias] = callback : null;
         }
+
         /**
          * Удалить все обработчики события
          * @param event
@@ -130,6 +133,7 @@ var Events = function () {
         value: function clear(event) {
             this.map[event] = this.mapOnce[event] = [];
         }
+
         /**
          * Удалить конкретный обработчик события, возможно импользовать имя
          * если оно было задано при установке обработчика или передать ссыллку на сам
@@ -149,6 +153,7 @@ var Events = function () {
                 return cb != remCb;
             }) : null;
         }
+
         /**
          * Запустить событие
          * @param event string Имя события
@@ -160,18 +165,22 @@ var Events = function () {
         key: 'fire',
         value: function fire(event, data) {
             var events = this;
-            return new Promise(function (resolv, reject) {
-                var ev = events.map[event] || [],
-                    evOnce = events.mapOnce[event] || [],
-                    result = [];
-                for (var i = 0, len = ev.length; i < len; i++) {
-                    result.push(events.call(ev[i], data));
-                }
-                while (evOnce.length > 0) {
-                    result.push(events.call(evOnce.shift(), data));
-                }resolv(result);
-            });
+            var ev = events.map[event] || [],
+                evOnce = events.mapOnce[event] || [],
+                resultPromises = [];
+
+            for (var i = 0, len = ev.length; i < len; i++) {
+                resultPromises.push(events.call(ev[i], data));
+            }
+            while (evOnce.length > 0) {
+                resultPromises.push(events.call(evOnce.shift(), data));
+            }var resultPromise = new Promise.all(resultPromises);
+
+            this.fire('fire', [event, resultPromise]);
+
+            return resultPromise;
         }
+
         /**
          * Внутренний метод для запуска обработчиков
          * @param callback
@@ -181,12 +190,16 @@ var Events = function () {
     }, {
         key: 'call',
         value: function call(callback, data) {
-            try {
-                return callback.call(this.parent, data ? data : null);
-            } catch (err) {
-                console.error(err);
-            }
+            var events = this;
+            return new Promise(function (resolv, reject) {
+                try {
+                    resolve(callback.call(events.parent, data ? data : null));
+                } catch (error) {
+                    reject(error);
+                }
+            });
         }
+
         /**
          * Назначить родителя обработчикам
          * @param parent
