@@ -74,7 +74,9 @@ export default class Events {
         while (evOnce.length > 0) resultPromises.push(events.call(evOnce.shift(), data));
         let resultPromise = Promise.all(resultPromises);
 
-        this.fire('fire', [event, resultPromise]);
+        if (event !== 'fire') {
+            this.fire('fire', [event, resultPromise]);
+        }
 
         return resultPromise;
     }

@@ -176,7 +176,9 @@ var Events = function () {
                 resultPromises.push(events.call(evOnce.shift(), data));
             }var resultPromise = Promise.all(resultPromises);
 
-            this.fire('fire', [event, resultPromise]);
+            if (event !== 'fire') {
+                this.fire('fire', [event, resultPromise]);
+            }
 
             return resultPromise;
         }
