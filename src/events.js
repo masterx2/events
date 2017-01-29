@@ -1,5 +1,4 @@
 export default class Events {
-
     constructor(parent) {
         this.parent = parent || this;
         this.map = {};
@@ -60,25 +59,14 @@ export default class Events {
      * Запустить событие
      * @param event string Имя события
      * @param data mixed Данные для передачи обработчикам
-     * @returns {Promise} Возвращает Promise который сработает после всех обработчиков
      */
     fire (event, data) {
-        const events = this;
-        let ev = events.map[event] || [],
-            evOnce = events.mapOnce[event] || [],
-            resultPromises = [];
-
+        let ev = this.map[event] || [],
+            evOnce = this.mapOnce[event] || [];
         for (let i = 0, len = ev.length; i < len; i++) {
-            resultPromises.push(events.call(ev[i], data));
+            this._call(ev[i], data);
         }
-        while (evOnce.length > 0) resultPromises.push(events.call(evOnce.shift(), data));
-        let resultPromise = Promise.all(resultPromises);
-
-        if (event !== 'fire') {
-            this.fire('fire', [event, resultPromise]);
-        }
-
-        return resultPromise;
+        while (evOnce.length > 0) this._call(evOnce.shift(), data);
     }
 
     /**
@@ -86,15 +74,8 @@ export default class Events {
      * @param callback
      * @param data
      */
-    call (callback, data) {
-        const events = this;
-        return new Promise(function(resolv, reject) {
-            try {
-                resolv(callback.call(events.parent, data ? data : null));
-            } catch (error) {
-                reject(error);
-            }
-        });
+   _call (callback, data) {
+        callback.call(events.parent, data ? data : null);
     }
 
     /**
