@@ -158,29 +158,19 @@ var Events = function () {
          * Запустить событие
          * @param event string Имя события
          * @param data mixed Данные для передачи обработчикам
-         * @returns {Promise} Возвращает Promise который сработает после всех обработчиков
          */
 
     }, {
         key: 'fire',
         value: function fire(event, data) {
-            var events = this;
-            var ev = events.map[event] || [],
-                evOnce = events.mapOnce[event] || [],
-                resultPromises = [];
-
+            var ev = this.map[event] || [],
+                evOnce = this.mapOnce[event] || [];
             for (var i = 0, len = ev.length; i < len; i++) {
-                resultPromises.push(events.call(ev[i], data));
+                this._call(ev[i], data);
             }
             while (evOnce.length > 0) {
-                resultPromises.push(events.call(evOnce.shift(), data));
-            }var resultPromise = Promise.all(resultPromises);
-
-            if (event !== 'fire') {
-                this.fire('fire', [event, resultPromise]);
+                this._call(evOnce.shift(), data);
             }
-
-            return resultPromise;
         }
 
         /**
@@ -190,16 +180,9 @@ var Events = function () {
          */
 
     }, {
-        key: 'call',
-        value: function call(callback, data) {
-            var events = this;
-            return new Promise(function (resolv, reject) {
-                try {
-                    resolv(callback.call(events.parent, data ? data : null));
-                } catch (error) {
-                    reject(error);
-                }
-            });
+        key: '_call',
+        value: function _call(callback, data) {
+            callback.call(events.parent, data ? data : null);
         }
 
         /**
